@@ -1,0 +1,11 @@
+spawnRoom
+base
+5x5
+1 1 1 1 1
+1 1 1 1 1
+1 1 2 1 1
+1 1 1 1 1
+1 1 1 1 1
+
+1 floor
+2 spawn point thing
