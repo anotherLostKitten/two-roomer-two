@@ -10,6 +10,8 @@ class Room():
         self.type = l[1][:-1]
         self.r = int(l[2][:l[2].index('x')])
         self.c = int(l[2][l[2].index('x') + 1:-1])
+        self.rs = -1
+        self.cs = -1
         self.room = []
         i = 0
         while(i < self.r):
