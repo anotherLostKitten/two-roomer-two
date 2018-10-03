@@ -165,3 +165,5 @@ class Level():
                 self.dungeon[r][c] = 0
                 self.deadEnd(nr, nc)
                 
+if __name__ == "__main__":
+    a = Level(79,79,400)
