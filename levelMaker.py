@@ -166,4 +166,5 @@ class Level():
                 self.deadEnd(nr, nc)
                 
 if __name__ == "__main__":
-    a = Level(79,79,400)
+    a = Level(45,179,400)
+    print(a)

@@ -11,8 +11,6 @@ class Room():
         self.type = l[1][:-1]
         self.r = int(l[2][:l[2].index('x')])
         self.c = int(l[2][l[2].index('x') + 1:-1])
-        #self.rs = -1
-        #self.cs = -1
         self.room = [[0] * self.c] * self.r if rotation % 2 == 0 else [[0] * self.r] * self.c
         for i in range(self.r):
             e = l[i+3].split(' ')[:self.c]
@@ -26,6 +24,11 @@ class Room():
                 else:
                     self.room[self.c - j - 1][i] = int(e[j])
         self.rotation = rotation
+        if rotation % 2 == 1:
+            tmp = self.r
+            self.r = self.c
+            self.c = tmp
+            
     def __str__(self):
         txt = ""
         for i in self.room:
@@ -47,5 +50,5 @@ class Room():
         return self.room
 
 if __name__ == "__main__":
-    a = Room("shop")
+    a = Room("enemy1")
     print(a)
