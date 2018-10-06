@@ -45,8 +45,7 @@ class Level():
         if not self.addRoom(choice(shop), 200):
             raise ValueError("Dungeon size too small...")
         # 1d
-        for rmrf in range(n):
-            self.addRoom(choice(enemy))
+        self.addRoom(choice(enemy)) for rmrf in range(n)
         # 2
         for i in range(1, r, 2):
             for j in range(1, c, 2):
@@ -129,31 +128,38 @@ class Level():
                     cons.add((r + i*j, c + i*(1 - j)))
         return cons
     def connect(self, cur, usedRooms):
-        self.dungeon[cur[0]][cur[1]] = 1
         if cur[1] % 2 == 0: # --
             if self.dungeon[cur[0]][cur[1] + 1] == 2:
+                self.dungeon[cur[0]][cur[1]] = 1
                 self.dungeon[cur[0]][cur[1] + 1] = 1
                 return self.pointCons(cur[0], cur[1] + 1)
             elif self.dungeon[cur[0]][cur[1] - 1] == 2:
+                self.dungeon[cur[0]][cur[1]] = 1
                 self.dungeon[cur[0]][cur[1] - 1] = 1
                 return self.pointCons(cur[0], cur[1] - 1)
             elif self.dungeon[cur[0]][cur[1] + 1] != 1 and self.dungeon[cur[0]][cur[1] + 1] not in usedRooms:
+                self.dungeon[cur[0]][cur[1]] = 7
                 usedRooms.add(self.dungeon[cur[0]][cur[1] + 1])
                 return self.roomCons(self.rooms[self.dungeon[cur[0]][cur[1] + 1] - 3])
             elif self.dungeon[cur[0]][cur[1] - 1] != 1 and self.dungeon[cur[0]][cur[1] - 1] not in usedRooms:
+                self.dungeon[cur[0]][cur[1]] = 7
                 usedRooms.add(self.dungeon[cur[0]][cur[1] - 1])
                 return self.roomCons(self.rooms[self.dungeon[cur[0]][cur[1] - 1] - 3])
         else: # |
             if self.dungeon[cur[0] + 1][cur[1]] == 2:
+                self.dungeon[cur[0]][cur[1]] = 1
                 self.dungeon[cur[0] + 1][cur[1]] = 1
                 return self.pointCons(cur[0] + 1, cur[1])
             elif self.dungeon[cur[0] - 1][cur[1]] == 2:
+                self.dungeon[cur[0]][cur[1]] = 1
                 self.dungeon[cur[0] - 1][cur[1]] = 1
                 return self.pointCons(cur[0] - 1, cur[1])
             elif self.dungeon[cur[0] - 1][cur[1]] != 1 and self.dungeon[cur[0] - 1][cur[1]] not in usedRooms:
+                self.dungeon[cur[0]][cur[1]] = 7
                 usedRooms.add(self.dungeon[cur[0] - 1][cur[1]])
                 return self.roomCons(self.rooms[self.dungeon[cur[0] - 1][cur[1]] - 3])
             elif self.dungeon[cur[0] + 1][cur[1]] != 1 and self.dungeon[cur[0] + 1][cur[1]] not in usedRooms:
+                self.dungeon[cur[0]][cur[1]] = 7
                 usedRooms.add(self.dungeon[cur[0] + 1][cur[1]])
                 return self.roomCons(self.rooms[self.dungeon[cur[0] + 1][cur[1]] - 3])
         return {cur}
