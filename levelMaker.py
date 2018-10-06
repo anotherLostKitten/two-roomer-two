@@ -26,6 +26,8 @@ class Level():
         # 0
         self.r = r
         self.c = c
+        self.spr = -1
+        self.spc = -1
         self.dungeon = []
         self.rooms = []
         for i in range(0, r):
@@ -91,6 +93,9 @@ class Level():
     def fill(self, r, c, ray):
         for i in range(len(ray)):
             for j in range(len(ray[0])):
+                if ray[i][j] == 2:
+                    self.spr = r+i
+                    self.spc = c+j
                 self.dungeon[r + i][c + j] = ray[i][j]
     def __str__(self):
         txt = ""
