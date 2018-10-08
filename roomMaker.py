@@ -1,6 +1,8 @@
 # Reads rooms from file.
 from random import randint
 
+walls = {0}
+
 class Room():
     def __init__(self, fileName):
         f = open("rooms/" + fileName + ".room")
@@ -11,14 +13,14 @@ class Room():
         self.type = l[1][:-1]
         self.r = int(l[2][:l[2].index('x')])
         self.c = int(l[2][l[2].index('x') + 1:-1])
-        self.room = [[0] * self.c] * self.r if rotation % 2 == 0 else [[0] * self.r] * self.c
+        self.room = [x[:] for x in ([[0] * self.c] * self.r if rotation % 2 == 0 else [[0] * self.r] * self.c)]
         for i in range(self.r):
-            e = l[i+3].split(' ')[:self.c]
+            e = l[i+3].split(' ')
             for j in range(self.c):
                 if rotation == 0:
                     self.room[i][j] = int(e[j])
                 elif rotation == 1:
-                    self.room[j][self.r - i - 1] = int(e[j])
+                    self.room[j][self.r-i-1] = int(e[j])
                 elif rotation == 2:
                     self.room[self.r - i - 1][self.c - j - 1] = int(e[j])
                 else:
@@ -39,7 +41,6 @@ class Room():
     def __repr__(self):
         return self.__str__()
     def basic(self, r):
-        walls = {0}
         a = []
         for i in self.room:
             a.append([])
@@ -50,5 +51,5 @@ class Room():
         return self.room
 
 if __name__ == "__main__":
-    a = Room("enemy1")
+    a = Room("spawn")
     print(a)

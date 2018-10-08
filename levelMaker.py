@@ -8,6 +8,8 @@ boss = ["boss"]
 shop = ["shop"]
 enemy = ["enemy1"]
 
+nogo = { 0 }
+
 class Level():
     """ Level Creation Algo:
         0. Generate dungeon array
@@ -45,7 +47,8 @@ class Level():
         if not self.addRoom(choice(shop), 200):
             raise ValueError("Dungeon size too small...")
         # 1d
-        self.addRoom(choice(enemy)) for rmrf in range(n)
+        for rmrf in range(n):
+            self.addRoom(choice(enemy))
         # 2
         for i in range(1, r, 2):
             for j in range(1, c, 2):
@@ -69,6 +72,9 @@ class Level():
                     self.deadEnd(i, j)
         # 6
         for r in self.rooms:
+            if r.name == "spawnRoom":
+                self.spr = r.rs + 2
+                self.spc = r.cs + 2
             self.fill(r.rs, r.cs, r.full())
     def addRoom(self, roomName, attempts = 50):
         room = Room(roomName)
@@ -92,15 +98,12 @@ class Level():
     def fill(self, r, c, ray):
         for i in range(len(ray)):
             for j in range(len(ray[0])):
-                if ray[i][j] == 2:
-                    self.spr = r+i
-                    self.spc = c+j
                 self.dungeon[r + i][c + j] = ray[i][j]
     def __str__(self):
         txt = ""
         for i in self.dungeon:
             for j in i:
-                txt += '#' if j == 0 else (' ' if j == 1 else str(j))
+                txt += '##' if j == 0 else ('  ' if j == 1 else ('>' if j<10 else '') + str(j))
             txt += '\n'
         return txt[:-1]
     def __repr__(self):
@@ -129,46 +132,40 @@ class Level():
         return cons
     def connect(self, cur, usedRooms):
         if cur[1] % 2 == 0: # --
+            self.dungeon[cur[0]][cur[1]] = 1 if self.dungeon[cur[0]][cur[1] - 1] + self.dungeon[cur[0]][cur[1] + 1] == 3 else 7
             if self.dungeon[cur[0]][cur[1] + 1] == 2:
-                self.dungeon[cur[0]][cur[1]] = 1
                 self.dungeon[cur[0]][cur[1] + 1] = 1
                 return self.pointCons(cur[0], cur[1] + 1)
             elif self.dungeon[cur[0]][cur[1] - 1] == 2:
-                self.dungeon[cur[0]][cur[1]] = 1
                 self.dungeon[cur[0]][cur[1] - 1] = 1
                 return self.pointCons(cur[0], cur[1] - 1)
             elif self.dungeon[cur[0]][cur[1] + 1] != 1 and self.dungeon[cur[0]][cur[1] + 1] not in usedRooms:
-                self.dungeon[cur[0]][cur[1]] = 7
                 usedRooms.add(self.dungeon[cur[0]][cur[1] + 1])
                 return self.roomCons(self.rooms[self.dungeon[cur[0]][cur[1] + 1] - 3])
             elif self.dungeon[cur[0]][cur[1] - 1] != 1 and self.dungeon[cur[0]][cur[1] - 1] not in usedRooms:
-                self.dungeon[cur[0]][cur[1]] = 7
                 usedRooms.add(self.dungeon[cur[0]][cur[1] - 1])
                 return self.roomCons(self.rooms[self.dungeon[cur[0]][cur[1] - 1] - 3])
         else: # |
+            self.dungeon[cur[0]][cur[1]] = 1 if self.dungeon[cur[0] - 1][cur[1]] + self.dungeon[cur[0] + 1][cur[1]] == 3 else 7
             if self.dungeon[cur[0] + 1][cur[1]] == 2:
-                self.dungeon[cur[0]][cur[1]] = 1
                 self.dungeon[cur[0] + 1][cur[1]] = 1
                 return self.pointCons(cur[0] + 1, cur[1])
             elif self.dungeon[cur[0] - 1][cur[1]] == 2:
-                self.dungeon[cur[0]][cur[1]] = 1
                 self.dungeon[cur[0] - 1][cur[1]] = 1
                 return self.pointCons(cur[0] - 1, cur[1])
             elif self.dungeon[cur[0] - 1][cur[1]] != 1 and self.dungeon[cur[0] - 1][cur[1]] not in usedRooms:
-                self.dungeon[cur[0]][cur[1]] = 7
                 usedRooms.add(self.dungeon[cur[0] - 1][cur[1]])
                 return self.roomCons(self.rooms[self.dungeon[cur[0] - 1][cur[1]] - 3])
             elif self.dungeon[cur[0] + 1][cur[1]] != 1 and self.dungeon[cur[0] + 1][cur[1]] not in usedRooms:
-                self.dungeon[cur[0]][cur[1]] = 7
                 usedRooms.add(self.dungeon[cur[0] + 1][cur[1]])
                 return self.roomCons(self.rooms[self.dungeon[cur[0] + 1][cur[1]] - 3])
         return {cur}
     def deadEnd(self, r, c):
-        if 0 < r < self.r and 0 < c < self.c and self.dungeon[r][c] == 1:
+        if 0 < r < self.r and 0 < c < self.c and self.dungeon[r][c] == 1 or 7:
             count = 0
             for i in range(-1, 2, 2):
                 for j in range(2):
-                    if self.dungeon[r + i*j][c + i*(1-j)] >= 1:
+                    if self.dungeon[r + i*j][c + i*(1-j)] not in nogo:
                         nr = r + i*j
                         nc = c + i*(1-j)
                         count += 1
@@ -177,5 +174,5 @@ class Level():
                 self.deadEnd(nr, nc)
                 
 if __name__ == "__main__":
-    a = Level(45,179,400)
+    a = Level(61,101,100)
     print(a)
