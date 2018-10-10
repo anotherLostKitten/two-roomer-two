@@ -32,18 +32,20 @@ class Player:
                     for j in range(-1,2):
                         self.discover(r + i, c + j)
 
-    def pbox(r):
-        out = [x[:] for x in [[-1] * c] * r]
-        for i in range(self.r - r, self.r + r):
-            for j in range(self.c - r, self.r + r):
-                if -1 < i < self.level.r and -1 < j < self.level.c:
+    def pbox(self, r):
+        out = [x[:] for x in [[-1] * (2 * r + 1)] * (2 * r + 1)]
+        for i in range(self.r, self.r + 2 * r + 1):
+            for j in range(self.c, self.c + 2 * r + 1):
+                if -1 < i - r < self.level.r and -1 < j - r < self.level.c and self.fow[i - r][j - r]:
+                    out[i - self.r][j - self.c] = self.level.dungeon[i - r][j - r]
+        return out
     def __str__(self):
         system('clear')
         out = ""
         for r in range(self.level.r):
             for c in range(self.level.c):
                 d = '#' if self.level.dungeon[r][c] == 0 else (' ' if self.level.dungeon[r][c] == 1 else str(self.level.dungeon[r][c]))
-                out += ('p' if r == self.r and c == self.c else (d if p.fow[r][c] else '?')) + (d if p.fow[r][c] else '?')
+                out += ('p' if r == self.r and c == self.c else (d if self.fow[r][c] else '?')) + (d if self.fow[r][c] else '?')
             out += '\n'
         return out
 
@@ -64,7 +66,19 @@ def binput(p):
     elif mov == 'd':
         p.move(0,1)
     return True
+def ppox(pboc):
+    system('clear')
+    pr = int((len(pboc) - 1) / 2)
+    out = ""
+    pboc[pr][pr] = 'p'
+    for r in pboc:
+        for c in r:
+            d = '#' if c == 0 else (' ' if c == 1 else str(c))
+            out += (d if c != -1 else '?') + (d if c != -1 else '?')
+        out += '\n'
+    return out
+
 if __name__ == "__main__":
     p = Player()
     while(binput(p)):
-        print(p)
+        print(ppox(p.pbox(10)))
