@@ -1,7 +1,7 @@
 # Reads rooms from file.
 from random import randint
 
-walls = {0}
+nogo = { 0 }
 
 class Room():
     def __init__(self, fileName):
@@ -45,11 +45,12 @@ class Room():
         for i in self.room:
             a.append([])
             for j in i:
-                a[-1].append(0 if j in walls else r)
+                a[-1].append(0 if j in nogo else r)
         return a
     def full(self):
         return self.room
 
 if __name__ == "__main__":
-    a = Room("spawn")
+    a = Room("enemy1")
     print(a)
+    print(a.basic(3))

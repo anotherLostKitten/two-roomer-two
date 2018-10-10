@@ -1,4 +1,4 @@
-# Procedural Dungeon generation
+#0 Procedural Dungeon generation
 
 from random import choice, randrange
 from roomMaker import Room
@@ -52,7 +52,7 @@ class Level():
         # 2
         for i in range(1, r, 2):
             for j in range(1, c, 2):
-                if self.dungeon[i][j] == 0:
+                if self.pointFits(i, j):
                     self.dungeon[i][j] = 2
         # 3
         usedRooms = set()
@@ -70,30 +70,34 @@ class Level():
             for j in range(1, c, 2):
                 if randrange(201) > 1:
                     self.deadEnd(i, j)
+        print(self)
         # 6
         for r in self.rooms:
             if r.name == "spawnRoom":
                 self.spr = r.rs + 2
                 self.spc = r.cs + 2
             self.fill(r.rs, r.cs, r.full())
+        print(self)
     def addRoom(self, roomName, attempts = 50):
         room = Room(roomName)
         for a in range(attempts):
-            r = randrange(1, self.r, 2)
-            c = randrange(1, self.c, 2)
+            room.rs = randrange(1, self.r - room.r, 2)
+            room.cs = randrange(1, self.c - room.c, 2)
             f = True
-            if self.fits(r, room.r, c, room.c):
-                self.fill(r, c, room.basic(len(self.rooms) + 3))
-                room.rs = r
-                room.cs = c
+            if self.fits(room):
+                self.fill(room.rs, room.cs, room.basic(len(self.rooms) + 3))
                 self.rooms.append(room)
                 return True
         return False
-    def fits(self, r, rd, c, cd):
-        for i in range(r, r + rd):
-            for j in range(c, c + cd):
-                if i >= self.r or j >= self.c or self.dungeon[i][j] != 0:
-                    return False
+    def pointFits(self, r, c):
+        for k in self.rooms:
+             if k.rs <= r <= k.rs + k.r and k.cs <= c <= k.cs + k.c:
+                 return False
+        return True
+    def fits(self, room):
+        for i in self.rooms:
+            if (i.rs <= room.rs <= i.rs + i.r or room.rs <= i.rs <= room.rs + room.r) and (i.cs <= room.cs <= i.cs + i.c or room.cs <= i.cs <= room.cs + room.c):
+                return False
         return True
     def fill(self, r, c, ray):
         for i in range(len(ray)):
@@ -127,11 +131,11 @@ class Level():
         cons = set()
         for i in range(-1, 2, 2):
             for j in range(2):
-                if 0 < r + 2*i*j < self.r and 0 < c + 2*i*(1 - j) < self.c and self.dungeon[r + 2*i*j][c + 2*i*(1 - j)] > 0:
+                if 0 < r + 2*i*j < self.r and 0 < c + 2*i*(1 - j) < self.c and self.dungeon[r + 2*i*j][c + 2*i*(1 - j)] > 0 and self.dungeon[r][c] > 0:
                     cons.add((r + i*j, c + i*(1 - j)))
         return cons
     def connect(self, cur, usedRooms):
-        if cur[1] % 2 == 0: # --
+        if cur[1] % 2 == 0 and self.dungeon[cur[0]][cur[1] + 1] > 0 and self.dungeon[cur[0]][cur[1] - 1] > 0: # --
             self.dungeon[cur[0]][cur[1]] = 1 if self.dungeon[cur[0]][cur[1] - 1] + self.dungeon[cur[0]][cur[1] + 1] == 3 else 7
             if self.dungeon[cur[0]][cur[1] + 1] == 2:
                 self.dungeon[cur[0]][cur[1] + 1] = 1
@@ -139,13 +143,13 @@ class Level():
             elif self.dungeon[cur[0]][cur[1] - 1] == 2:
                 self.dungeon[cur[0]][cur[1] - 1] = 1
                 return self.pointCons(cur[0], cur[1] - 1)
-            elif self.dungeon[cur[0]][cur[1] + 1] != 1 and self.dungeon[cur[0]][cur[1] + 1] not in usedRooms:
+            elif self.dungeon[cur[0]][cur[1] + 1] > 1 and self.dungeon[cur[0]][cur[1] + 1] not in usedRooms:
                 usedRooms.add(self.dungeon[cur[0]][cur[1] + 1])
                 return self.roomCons(self.rooms[self.dungeon[cur[0]][cur[1] + 1] - 3])
-            elif self.dungeon[cur[0]][cur[1] - 1] != 1 and self.dungeon[cur[0]][cur[1] - 1] not in usedRooms:
+            elif self.dungeon[cur[0]][cur[1] - 1] > 1 and self.dungeon[cur[0]][cur[1] - 1] not in usedRooms:
                 usedRooms.add(self.dungeon[cur[0]][cur[1] - 1])
                 return self.roomCons(self.rooms[self.dungeon[cur[0]][cur[1] - 1] - 3])
-        else: # |
+        elif self.dungeon[cur[0] + 1][cur[1]] > 0 and self.dungeon[cur[0] - 1][cur[1]] > 0: # |
             self.dungeon[cur[0]][cur[1]] = 1 if self.dungeon[cur[0] - 1][cur[1]] + self.dungeon[cur[0] + 1][cur[1]] == 3 else 7
             if self.dungeon[cur[0] + 1][cur[1]] == 2:
                 self.dungeon[cur[0] + 1][cur[1]] = 1
@@ -153,10 +157,10 @@ class Level():
             elif self.dungeon[cur[0] - 1][cur[1]] == 2:
                 self.dungeon[cur[0] - 1][cur[1]] = 1
                 return self.pointCons(cur[0] - 1, cur[1])
-            elif self.dungeon[cur[0] - 1][cur[1]] != 1 and self.dungeon[cur[0] - 1][cur[1]] not in usedRooms:
+            elif self.dungeon[cur[0] - 1][cur[1]] > 1 and self.dungeon[cur[0] - 1][cur[1]] not in usedRooms:
                 usedRooms.add(self.dungeon[cur[0] - 1][cur[1]])
                 return self.roomCons(self.rooms[self.dungeon[cur[0] - 1][cur[1]] - 3])
-            elif self.dungeon[cur[0] + 1][cur[1]] != 1 and self.dungeon[cur[0] + 1][cur[1]] not in usedRooms:
+            elif self.dungeon[cur[0] + 1][cur[1]] > 1 and self.dungeon[cur[0] + 1][cur[1]] not in usedRooms:
                 usedRooms.add(self.dungeon[cur[0] + 1][cur[1]])
                 return self.roomCons(self.rooms[self.dungeon[cur[0] + 1][cur[1]] - 3])
         return {cur}

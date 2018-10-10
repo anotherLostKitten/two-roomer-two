@@ -1,5 +1,5 @@
 from levelMaker import Level
-
+from os import system, name
 nogo = { 0 }
 door = 7
 
@@ -32,6 +32,7 @@ class Player:
 
 
     def __str__(self):
+        system('clear')
         out = ""
         for r in range(self.level.r):
             for c in range(self.level.c):
