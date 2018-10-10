@@ -14,6 +14,7 @@ class Player:
         self.c = self.level.spc
         self.fow = [x[:] for x in [[False] * self.level.c] * self.level.r]
         self.discover(self.r, self.c)
+
     def move(self, dr, dc):
          if self.level.dungeon[self.r + dr][self.c + dc] not in nogo:
             self.r += dr
@@ -22,6 +23,7 @@ class Player:
                 self.fow[self.r][self.c] = False
                 self.level.dungeon[self.r][self.c] = 1
                 self.discover(self.r, self.c)
+
     def discover(self, r, c):
         if not self.fow[r][c]:
             self.fow[r][c] = True
@@ -30,7 +32,11 @@ class Player:
                     for j in range(-1,2):
                         self.discover(r + i, c + j)
 
-
+    def pbox(r):
+        out = [x[:] for x in [[-1] * c] * r]
+        for i in range(self.r - r, self.r + r):
+            for j in range(self.c - r, self.r + r):
+                if -1 < i < self.level.r and -1 < j < self.level.c:
     def __str__(self):
         system('clear')
         out = ""
