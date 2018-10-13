@@ -56,12 +56,20 @@ class Level():
                     self.dungeon[i][j] = 2
         # 3
         usedRooms = set()
-        if self.dungeon[1][1] == 2:
-            self.dungeon[1][1] = 1
-            cons = self.pointCons(1, 1)
-        else:
-            usedRooms.add(self.dungeon[1][1])
-            cons = self.roomCons(self.rooms[self.dungeon[1][1] - 3])
+        ssr, ssc = (1,1)
+        while ssr < self.c:
+            ssc += 2
+            if ssc >= self.r:
+                ssc = 1
+                ssr += 2
+            if self.dungeon[ssr][ssc] != 0:
+                if self.dungeon[ssr][ssc] == 2:
+                    self.dungeon[ssr][ssc] = 1
+                    cons = self.pointCons(ssr, ssc)
+                else:
+                    usedRooms.add(self.dungeon[ssr][ssc])
+                    cons = self.roomCons(self.rooms[self.dungeon[ssr][ssc] - 3])
+                break
         while len(cons) > 0:
             cons = cons ^ self.connect(choice(tuple(cons)), usedRooms)
 
