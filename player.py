@@ -49,12 +49,7 @@ class Player:
             out += '\n'
         return out
 
-def binput(p):
-    inputs = {'w', 'a', 's', 'd', 'q'}
-    while True:
-        mov = input(": ")
-        if mov in inputs:
-            break
+def binput(p, mov):
     if mov == 'q':
         return False
     elif mov == 'w':
