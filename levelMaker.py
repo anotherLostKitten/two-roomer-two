@@ -57,6 +57,7 @@ class Level():
         # 3
         usedRooms = set()
         ssr, ssc = (1,1)
+        self.rcons = []
         while ssr < self.c:
             ssc += 2
             if ssc >= self.r:
@@ -72,7 +73,14 @@ class Level():
                 break
         while len(cons) > 0:
             cons = cons ^ self.connect(choice(tuple(cons)), usedRooms)
-
+        # 4
+        
+        for cur in self.rcons:
+            if randrange(3) == 0:
+                if cur[1] % 2 == 0 and self.dungeon[cur[0]][cur[1] + 1] > 0 and self.dungeon[cur[0]][cur[1] - 1] > 0: # --
+                    self.dungeon[cur[0]][cur[1]] = 1 if self.dungeon[cur[0]][cur[1] - 1] + self.dungeon[cur[0]][cur[1] + 1] == 2 else 7
+                elif self.dungeon[cur[0] + 1][cur[1]] > 0 and self.dungeon[cur[0] - 1][cur[1]] > 0: # |
+                    self.dungeon[cur[0]][cur[1]] = 1 if self.dungeon[cur[0] - 1][cur[1]] + self.dungeon[cur[0] + 1][cur[1]] == 2 else 7
         # 5
         for i in range (1, r, 2):
             for j in range(1, c, 2):
@@ -119,6 +127,7 @@ class Level():
         return txt[:-1]
     def __repr__(self):
         return self.__str__()
+
     def roomCons(self, room):
         cons = set()
         # ||
@@ -133,6 +142,8 @@ class Level():
                 cons.add((room.rs - 1, i))
             if self.dungeon[room.rs + room.r - 1][i] > 0 and room.rs + room.r + 1 < self.r and self.dungeon[room.rs + room.r + 1][i] > 0:
                 cons.add((room.rs + room.r, i))
+        for i in range(randrange(5)):
+            self.rcons.append(choice(tuple(cons)))
         return cons
     def pointCons(self, r, c):
         cons = set()
@@ -140,6 +151,8 @@ class Level():
             for j in range(2):
                 if 0 < r + 2*i*j < self.r and 0 < c + 2*i*(1 - j) < self.c and self.dungeon[r + 2*i*j][c + 2*i*(1 - j)] > 0 and self.dungeon[r][c] > 0:
                     cons.add((r + i*j, c + i*(1 - j)))
+        if randrange(30) == 0:
+            self.rcons.append(choice(tuple(cons)))
         return cons
     def connect(self, cur, usedRooms):
         if cur[1] % 2 == 0 and self.dungeon[cur[0]][cur[1] + 1] > 0 and self.dungeon[cur[0]][cur[1] - 1] > 0: # --
