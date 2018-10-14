@@ -78,7 +78,6 @@ class Level():
             for j in range(1, c, 2):
                 if randrange(201) > 1:
                     self.deadEnd(i, j)
-        print(self)
         # 6
         for r in self.rooms:
             if r.name == "spawnRoom":
