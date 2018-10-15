@@ -1,7 +1,7 @@
 import pygame
 import pygame.locals
 from player import Player, binput
-
+from helpers import *
 def get_textures(filename):
     m = pygame.image.load("textures/" + filename + ".png")
     mw, mh = m.get_size()
@@ -13,12 +13,6 @@ def get_textures(filename):
 walls = get_textures("walls")
 door = get_textures("door")
 player = get_textures("pp_hed")
-def rr(i, rc):
-    i %= 4
-    return i-1-rc if (i+rc) % 2 == 0 else 0
-def rb(i, rc):
-    i = (i + 1 - rc) % 4
-    return -1 if i < 2 else 1
 def render_wall(p, r, c, s, x, y):
     for i in range(4):
         if 0 <= r + rr(i,0) < p.level.r and 0 <= c + rr(i, 1) < p.level.c and p.level.dungeon[r + rr(i,0)][c + rr(i,1)] != 0 and p.fow[r + (i-1 if i % 2 == 0 else 0)][c + (i-2 if i % 2 == 1 else 0)]:
@@ -57,5 +51,6 @@ if __name__ == '__main__':
             if e.type == pygame.locals.QUIT:
                 playin = False
             elif e.type == pygame.locals.KEYDOWN:
+                print(e.key)
                 playin = binput(p, chr(e.key))
         renderp(p, screen, dradius)

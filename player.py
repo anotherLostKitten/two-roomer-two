@@ -1,4 +1,7 @@
 from levelMaker import Level
+from random import choice
+from helpers import *
+from skills import *
 from os import system, name
 nogo = { 0 }
 door = 7
@@ -14,16 +17,18 @@ class Player:
         self.c = self.level.spc
         self.fow = [x[:] for x in [[False] * self.level.c] * self.level.r]
         self.discover(self.r, self.c)
-
-    def move(self, dr, dc):
-         if self.level.dungeon[self.r + dr][self.c + dc] not in nogo:
-            self.r += dr
-            self.c += dc
+        self.rot = 0
+        self.sp = choice(list(sp))
+    def move(self, dr):
+        if self.level.dungeon[self.r + dr[0]][self.c + dr[1]] not in nogo:
+            self.r += dr[0]
+            self.c += dr[1]
             if self.level.dungeon[self.r][self.c] == door:
                 self.fow[self.r][self.c] = False
                 self.level.dungeon[self.r][self.c] = 1
                 self.discover(self.r, self.c)
-
+    def movp(self, dp):
+        self.move(rc(self.rot, dp))
     def discover(self, r, c):
         if not self.fow[r][c]:
             self.fow[r][c] = True
@@ -50,16 +55,26 @@ class Player:
         return out
 
 def binput(p, mov):
-    if mov == 'q':
+    if mov == chr(32):
         return False
     elif mov == 'w':
-        p.move(-1, 0)
+        p.move((-1,0))
     elif mov == 'a':
-        p.move(0, -1)
+        p.move((0,-1))
     elif mov == 's':
-        p.move(1,0)
+        p.move((1,0))
     elif mov == 'd':
-        p.move(0,1)
+        p.move((0,1))
+    elif mov == ' ':
+        p.movp((1,0))
+    elif mov == chr(273): # arrow keys
+        p.rot = 0
+    elif mov == chr(276):
+        p.rot = 1
+    elif mov == chr(274):
+        p.rot = 2
+    elif mov == chr(275):
+        p.rot = 3
     return True
 def ppox(pboc):
     system('clear')
