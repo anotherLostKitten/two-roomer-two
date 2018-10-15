@@ -6,7 +6,7 @@ from roomMaker import Room
 basic = ["exit", "spawn"]
 boss = ["boss"]
 shop = ["shop"]
-enemy = ["enemy1"]
+enemy = ["enemy1", "benis"]
 
 nogo = { 0 }
 
@@ -193,9 +193,10 @@ class Level():
                         nr = r + i*j
                         nc = c + i*(1-j)
                         count += 1
-            if count == 1:
+            if count <= 1:
                 self.dungeon[r][c] = 0
-                self.deadEnd(nr, nc)
+                if count == 1:
+                    self.deadEnd(nr, nc)
                 
 if __name__ == "__main__":
     a = Level(61,101,100)

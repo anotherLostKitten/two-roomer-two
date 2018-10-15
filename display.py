@@ -20,7 +20,7 @@ def rb(i, rc):
     i = (i + 1 - rc) % 4
     return -1 if i < 2 else 1
 def render_wall(p, r, c, s, x, y):
-    for i in range(4):        
+    for i in range(4):
         if 0 <= r + rr(i,0) < p.level.r and 0 <= c + rr(i, 1) < p.level.c and p.level.dungeon[r + rr(i,0)][c + rr(i,1)] != 0 and p.fow[r + (i-1 if i % 2 == 0 else 0)][c + (i-2 if i % 2 == 1 else 0)]:
             s.blit(pygame.transform.rotate(walls[1], 90 * i - 90), (x, y))
     for i in range(4):
@@ -41,7 +41,6 @@ def renderp(p, s, r):
                     s.blit(door[0], ((j - p.c) * 32, (i - p.r) * 32))
     s.blit(player[0], (r * 32, r * 32))
     pygame.display.flip()
-                
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((672, 672))
@@ -60,4 +59,3 @@ if __name__ == '__main__':
             elif e.type == pygame.locals.KEYDOWN:
                 playin = binput(p, chr(e.key))
         renderp(p, screen, dradius)
-        
