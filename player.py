@@ -10,7 +10,7 @@ class Player:
     def __init__(self):
         self.hp = 10
         self.newLevel()
-
+        self.toAnim = {'a':((1,0),(1,1),(1,-1))}
     def newLevel(self):
         self.level = Level(45, 101, 100)
         self.r = self.level.spr
@@ -55,7 +55,7 @@ class Player:
         return out
 
 def binput(p, mov):
-    if mov == chr(32):
+    if mov == chr(27):
         return False
     elif mov == 'w':
         p.move((-1,0))

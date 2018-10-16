@@ -2,6 +2,7 @@ import pygame
 import pygame.locals
 from player import Player, binput
 from helpers import *
+from animate import Animate
 def get_textures(filename):
     m = pygame.image.load("textures/" + filename + ".png")
     mw, mh = m.get_size()
@@ -13,6 +14,8 @@ def get_textures(filename):
 walls = get_textures("walls")
 door = get_textures("door")
 player = get_textures("pp_hed")
+dictadd = ('a')
+animdict = { i: get_textures(i) for i in dictadd }
 def render_wall(p, r, c, s, x, y):
     for i in range(4):
         if 0 <= r + rr(i,0) < p.level.r and 0 <= c + rr(i, 1) < p.level.c and p.level.dungeon[r + rr(i,0)][c + rr(i,1)] != 0 and p.fow[r + (i-1 if i % 2 == 0 else 0)][c + (i-2 if i % 2 == 1 else 0)]:
@@ -33,8 +36,21 @@ def renderp(p, s, r):
                     render_wall(p, i-r, j-r, s, (j - p.c) * 32, (i - p.r) * 32)
                 elif p.level.dungeon[i - r][j - r] == 7:
                     s.blit(door[0], ((j - p.c) * 32, (i - p.r) * 32))
-    s.blit(player[0], (r * 32, r * 32))
-    pygame.display.flip()
+def ganimlist(p, animlist):
+    for i in p.toAnim:
+        for a in p.toAnim[i]:
+            animlist.append(Animate((a[0] + p.r, a[1] + p.c), animdict[i], 0, 0))
+    p.toAnim = {}
+def ranimlist(p, s, animlist, r):
+    i = 0
+    while i < len(animlist):
+        tmp = animlist[i].nxt()
+        if tmp == None:
+            animlist.pop(i)
+            continue
+        elif abs(animlist[i].cord[0]-p.r) <= dradius and abs(animlist[i].cord[1]-p.c) <= dradius:
+            s.blit(tmp, ((animlist[i].cord[0] + dradius - p.r)*32, (animlist[i].cord[1] + dradius - p.c)*32))
+        i += 1
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((672, 672))
@@ -42,15 +58,21 @@ if __name__ == '__main__':
     p = Player()
     dradius = 10
     playin = True
-    renderp(p, screen, dradius)
     clock = pygame.time.Clock()
+    animlist = []
     while playin:
-
+        renderp(p, screen, dradius)
+                    
+                    
+        screen.blit(player[0], (dradius * 32, dradius * 32))
+        ganimlist(p,animlist)
+        ranimlist(p,screen,animlist,dradius)
+        pygame.display.flip()
         clock.tick(15)
         for e in pygame.event.get():
             if e.type == pygame.locals.QUIT:
                 playin = False
             elif e.type == pygame.locals.KEYDOWN:
-                print(e.key)
+#                print(e.key)
                 playin = binput(p, chr(e.key))
-        renderp(p, screen, dradius)
+        
