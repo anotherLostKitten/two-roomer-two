@@ -3,6 +3,8 @@ from random import choice
 from helpers import *
 from skills import *
 from os import system, name
+import pygame
+import pygame.locals
 nogo = { 0 }
 door = 7
 
@@ -11,6 +13,9 @@ class Player:
         self.hp = 10
         self.newLevel()
         self.toAnim = {'a':((1,0),(1,1),(1,-1))}
+        self.movs = {pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_SPACE, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT}
+        self.movecd = 0
+        #self.q = ()
     def newLevel(self):
         self.level = Level(45, 101, 100)
         self.r = self.level.spr

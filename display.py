@@ -3,6 +3,7 @@ import pygame.locals
 from player import Player, binput
 from helpers import *
 from animate import Animate
+
 def get_textures(filename):
     m = pygame.image.load("textures/" + filename + ".png")
     mw, mh = m.get_size()
@@ -16,6 +17,7 @@ door = get_textures("door")
 player = get_textures("pp_hed")
 dictadd = ('a')
 animdict = { i: get_textures(i) for i in dictadd }
+
 def render_wall(p, r, c, s, x, y):
     for i in range(4):
         if 0 <= r + rr(i,0) < p.level.r and 0 <= c + rr(i, 1) < p.level.c and p.level.dungeon[r + rr(i,0)][c + rr(i,1)] != 0 and p.fow[r + (i-1 if i % 2 == 0 else 0)][c + (i-2 if i % 2 == 1 else 0)]:
@@ -51,6 +53,7 @@ def ranimlist(p, s, animlist, r):
         elif abs(animlist[i].cord[0]-p.r) <= dradius and abs(animlist[i].cord[1]-p.c) <= dradius:
             s.blit(tmp, ((animlist[i].cord[1] + dradius - p.c)*32, (animlist[i].cord[0] + dradius - p.r)*32))
         i += 1
+
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((672, 672))
@@ -60,6 +63,9 @@ if __name__ == '__main__':
     playin = True
     clock = pygame.time.Clock()
     animlist = []
+
+    
+    
     while playin:
         renderp(p, screen, dradius)
                     
@@ -72,7 +78,7 @@ if __name__ == '__main__':
         for e in pygame.event.get():
             if e.type == pygame.locals.QUIT:
                 playin = False
-            elif e.type == pygame.locals.KEYDOWN:
-#                print(e.key)
-                playin = binput(p, chr(e.key))
+        pr = pygame.key.get_pressed()
+        for k in (ke for ke in p.movs if pr[ke]):
+                playin = binput(p, chr(k))
         
