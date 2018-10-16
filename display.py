@@ -15,7 +15,7 @@ def get_textures(filename):
 walls = get_textures("walls")
 door = get_textures("door")
 player = get_textures("pp_hed")
-dictadd = ('a')
+dictadd = ('a', 'm')
 animdict = { i: get_textures(i) for i in dictadd }
 
 def render_wall(p, r, c, s, x, y):
@@ -41,7 +41,7 @@ def renderp(p, s, r):
 def ganimlist(p, animlist):
     for i in p.toAnim:
         for a in p.toAnim[i]:
-            animlist.append(Animate((a[0] + p.r, a[1] + p.c), animdict[i], 0, 50))
+            animlist.append(Animate(a, animdict[i], 0, 0))
     p.toAnim = {}
 def ranimlist(p, s, animlist, r):
     i = 0
@@ -75,10 +75,11 @@ if __name__ == '__main__':
         ranimlist(p,screen,animlist,dradius)
         pygame.display.flip()
         clock.tick(15)
+        p.cdd()
         for e in pygame.event.get():
             if e.type == pygame.locals.QUIT:
                 playin = False
         pr = pygame.key.get_pressed()
         for k in (ke for ke in p.movs if pr[ke]):
-                playin = binput(p, chr(k))
+                playin = binput(p, k)
         

@@ -1,7 +1,7 @@
 from levelMaker import Level
 from random import choice
 from helpers import *
-from skills import *
+import skills
 from os import system, name
 import pygame
 import pygame.locals
@@ -13,9 +13,12 @@ class Player:
         self.hp = 10
         self.newLevel()
         self.toAnim = {'a':((1,0),(1,1),(1,-1))}
-        self.movs = {pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_SPACE, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT}
+        self.movs = (pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_q)
         self.movecd = 0
-        #self.q = ()
+        self.q = choice(list(skills.q))
+        self.qcd = 0
+        self.e = choice(list(skills.e))
+        self.ecd = 0
     def newLevel(self):
         self.level = Level(45, 101, 100)
         self.r = self.level.spr
@@ -23,9 +26,43 @@ class Player:
         self.fow = [x[:] for x in [[False] * self.level.c] * self.level.r]
         self.discover(self.r, self.c)
         self.rot = 0
-        self.sp = choice(list(sp))
+    def cdd(self):
+        if self.movecd > 0:
+            self.movecd -= 1
+        if self.qcd > 0:
+            self.qcd -= 1
+        if self.ecd > 0:
+            self.ecd -= 1
+
+    def qg(self):
+        if self.qcd == 0:
+            d = skills.q[self.q]()
+            o = d['o'] if 'o' in d else list(d)
+            for i in o:
+                cur = d[i]
+                if i == 'm':
+                    for j in cur:
+                        self.movp(j)
+                elif i == 'a':
+                    for j in cur:
+                        self.aadd('a', rc(self.rot, j))
+                elif i == 'c':
+                    self.qcd = cur
+    def aadd(self, t, dc):
+        if t not in self.toAnim:
+            self.toAnim[t] = ()
+        self.toAnim[t] += ((dc[0] + self.r, dc[1] + self.c),)
+    def bsc(self, dr):
+        if self.movecd == 0:
+            self.movecd = 5
+            self.move(dr)
+    def bscp(self, dr):
+        if self.movecd == 0:
+            self.movecd = 5
+            self.movp(dr)
     def move(self, dr):
         if self.level.dungeon[self.r + dr[0]][self.c + dr[1]] not in nogo:
+            self.aadd('m', (0,0))
             self.r += dr[0]
             self.c += dr[1]
             if self.level.dungeon[self.r][self.c] == door:
@@ -60,26 +97,28 @@ class Player:
         return out
 
 def binput(p, mov):
-    if mov == chr(27):
+    if mov == pygame.K_ESCAPE:
         return False
-    elif mov == 'w':
-        p.move((-1,0))
-    elif mov == 'a':
-        p.move((0,-1))
-    elif mov == 's':
-        p.move((1,0))
-    elif mov == 'd':
-        p.move((0,1))
-    elif mov == ' ':
-        p.movp((1,0))
-    elif mov == chr(273): # arrow keys
+    elif mov == pygame.K_w:
+        p.bsc((-1,0))
+    elif mov == pygame.K_a:
+        p.bsc((0,-1))
+    elif mov == pygame.K_s:
+        p.bsc((1,0))
+    elif mov == pygame.K_d:
+        p.bsc((0,1))
+    elif mov == pygame.K_SPACE:
+        p.bscp((1,0))
+    elif mov == pygame.K_UP: # arrow keys
         p.rot = 0
-    elif mov == chr(276):
+    elif mov == pygame.K_LEFT:
         p.rot = 1
-    elif mov == chr(274):
+    elif mov == pygame.K_DOWN:
         p.rot = 2
-    elif mov == chr(275):
+    elif mov == pygame.K_RIGHT:
         p.rot = 3
+    elif mov == pygame.K_q:
+        p.qg()
     return True
 def ppox(pboc):
     system('clear')
