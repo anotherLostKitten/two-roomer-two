@@ -39,7 +39,7 @@ def renderp(p, s, r):
 def ganimlist(p, animlist):
     for i in p.toAnim:
         for a in p.toAnim[i]:
-            animlist.append(Animate((a[0] + p.r, a[1] + p.c), animdict[i], 0, 0))
+            animlist.append(Animate((a[0] + p.r, a[1] + p.c), animdict[i], 0, 50))
     p.toAnim = {}
 def ranimlist(p, s, animlist, r):
     i = 0
@@ -49,7 +49,7 @@ def ranimlist(p, s, animlist, r):
             animlist.pop(i)
             continue
         elif abs(animlist[i].cord[0]-p.r) <= dradius and abs(animlist[i].cord[1]-p.c) <= dradius:
-            s.blit(tmp, ((animlist[i].cord[0] + dradius - p.r)*32, (animlist[i].cord[1] + dradius - p.c)*32))
+            s.blit(tmp, ((animlist[i].cord[1] + dradius - p.c)*32, (animlist[i].cord[0] + dradius - p.r)*32))
         i += 1
 if __name__ == '__main__':
     pygame.init()
