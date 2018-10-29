@@ -6,7 +6,7 @@ from roomMaker import Room
 basic = ["exit", "spawn"]
 boss = ["boss"]
 shop = ["shop"]
-enemy = ["enemy1", "benis"]
+enemy = ["enemy1", "benis", "l"]
 
 nogo = { 0 }
 
