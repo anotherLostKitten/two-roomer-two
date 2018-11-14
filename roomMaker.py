@@ -5,7 +5,7 @@ nogo = { 0 }
 
 class Room():
     def __init__(self, fileName):
-        f = open("rooms/" + fileName + ".room")
+        f = open("rooms/" + fileName + ".room", 'r')
         l = f.readlines()
         f.close()
         rotation = randint(0,3)
