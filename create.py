@@ -17,43 +17,28 @@ animdict = { i: get_textures(i) for i in dictadd }
 movs = (pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0)
 
 class Room():
-    def __init__(self, name, rtype = None, r = None, c = None, etc = None):
-        if rtype != None:
+    def __init__(self, name, rtype = None, r = None, c = None, etc = None, readf = False):
+        if readf:
+            f = open("rooms/" + name + ".room", 'r')
+            l = f.read().split('\n')
+            print(l)
+            f.close()
+            self.name = l[0]
+            self.type = l[1]
+            self.r = int(l[2][:l[2].index('x')])
+            self.c = int(l[2][l[2].index('x') + 1:])
+            self.room = [[int(j) for j in l[i+3].split(' ')[:self.c]] for i in range(self.r)]
+            self.etc = ''
+            for i in l[self.r+3:]:
+                self.etc += i
+        else:
             self.name = name
             self.type = rtype
-            self.r = r if r > c else c
-            self.c = c if r > c else r
+            self.r = r if r < c else c
+            self.c = c if r < c else r
             self.room = [x[:] for x in ([[1] * self.c] * self.r)]
             self.etc = etc + '\n'
-        else:
-            self.read(name)
         self.cr = self.cc = 0
-    def read(self, fileName):
-        f = open("rooms/" + fileName + ".room", 'r')
-        l = f.read().split('\n')
-        print(l)
-        f.close()
-        self.name = l[0]
-        self.type = l[1]
-        self.r = int(l[2][:l[2].index('x')])
-        self.c = int(l[2][l[2].index('x') + 1:])
-        self.room = [[int(j) for j in l[i+3].split(' ')[:self.c]] for i in range(self.r)]
-        self.etc = ''
-        for i in l[self.r+3:]:
-            self.etc += i
-        '''
-        for i in range(self.r):
-            e = l[i+3].split(' ')
-            for j in range(self.c):
-                if rotation == 0:
-                    self.room[i][j] = int(e[j])
-                elif rotation == 1:
-                    self.room[j][self.r-i-1] = int(e[j])
-                elif rotation == 2:
-                    self.room[self.r - i - 1][self.c - j - 1] = int(e[j])
-                else:
-                    self.room[self.c - j - 1][i] = int(e[j])
-        '''
     def __str__(self):
         txt = "" + self.name + "\n" + self.type + "\n" + str(self.r) + "x" + str(self.c) + "\n"
         for i in self.room:
@@ -122,7 +107,7 @@ def cinput(room, mov):
 if __name__ == "__main__":
     name=input("name |")
     if isfile("rooms/"+name+".room") and input("'o' to overwrite existing file |") != 'o':
-        room = Room(name)
+        room = Room(name, readf = True)
     else:
         rtype=''
         while rtype not in rtypes:
@@ -136,7 +121,7 @@ if __name__ == "__main__":
                 pass
         etc = input("etc. |")
         room = Room(name, rtype, r, c, etc)
-    print(room)
+    #print(room)
     pygame.init()
     screen = pygame.display.set_mode((32*room.c, 32*room.r))
     playin = True

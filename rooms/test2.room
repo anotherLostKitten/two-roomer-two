@@ -1,9 +1,7 @@
 test2
 loot
-5x3
-1 1 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 1 1 
-asdfghjkl
+3x5
+1 1 1 1 1 
+1 0 1 0 1 
+1 1 1 1 1 
+made with create.py
