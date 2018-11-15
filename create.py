@@ -130,6 +130,8 @@ if __name__ == "__main__":
         screen.fill((0,0,0))
         for i in range(room.r):
             for j in range(room.c):
+                if room.room[i][j] == 7:
+                    screen.blit(door[0], (j*32, i*32))
                 render_wall(room, i, j, screen, j*32, i*32)
         screen.blit(player[0], (room.cc*32, room.cr*32))
         pygame.display.flip()
