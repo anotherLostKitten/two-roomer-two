@@ -1,10 +1,13 @@
-from levelMaker import Level
-from random import choice
-from helpers import *
-import skills
 from os import system, name
+from random import choice
+
 import pygame
 import pygame.locals
+
+from levelMaker import Level
+from helpers import *
+import skills
+
 nogo = { 0 }
 door = 7
 

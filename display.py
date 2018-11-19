@@ -1,5 +1,6 @@
 import pygame
 import pygame.locals
+
 from player import Player, binput
 from helpers import *
 from animate import Animate
